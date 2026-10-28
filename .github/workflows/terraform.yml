@@ -5,28 +5,63 @@ on:
     inputs:
       environment:
         type: choice
-        options: [dev, prod]
+        options: ["dev (903036621622)", "prod (903036621622)"]
+      action:
+        type: choice
+        options: [plan, apply, destroy]
 
 permissions:
-  id-token: write # needed for OIDC login to AWS
+  id-token: write
   contents: read
 
+env:
+  AWS_REGION: ap-southeast-1
+  TF_VARS: -var-file=../envs/common.tfvars -var-file=../envs/${{ startsWith(inputs.environment, 'prod') && 'prod' || 'dev' }}.tfvars
+
 jobs:
-  deploy:
+  get_account_id:
+    name: Extract AWS account ID
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: terraform
+    outputs:
+      env: ${{ steps.x.outputs.env }}
+      account_id: ${{ steps.x.outputs.account_id }}
+    steps:
+      - id: x
+        run: |
+          IN="${{ inputs.environment }}"            # "dev (903036621622)"
+          echo "env=${IN%% *}" >> "$GITHUB_OUTPUT"  # dev
+          ID="${IN##*(}"; echo "account_id=${ID%)}" >> "$GITHUB_OUTPUT"  # 903036621622
+
+  plan:
+    name: Plan (${{ needs.get_account_id.outputs.env }})
+    needs: get_account_id
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: terraform } }
     steps:
       - uses: actions/checkout@v4
-
-      - uses: aws-actions/configure-aws-credentials@v4
+      - name: Authorize with OIDC
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::903036621622:role/github-terraform
-          aws-region: ap-southeast-1
-
+          role-to-assume: arn:aws:iam::${{ needs.get_account_id.outputs.account_id }}:role/github-terraform
+          aws-region: ${{ env.AWS_REGION }}
       - uses: hashicorp/setup-terraform@v3
+      - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}"
+      - run: terraform plan ${{ inputs.action == 'destroy' && '-destroy' || '' }} $TF_VARS
 
-      - run: terraform init -backend-config="bucket=lf-learn-${{ inputs.environment }}-tf-state-903036621622" -backend-config="key=terraform.tfstate" -backend-config="region=ap-southeast-1"
-
-      - run: terraform apply -auto-approve -var-file=../envs/common.tfvars -var-file=../envs/${{ inputs.environment }}.tfvars
+  apply:
+    name: ${{ inputs.action }} (${{ needs.get_account_id.outputs.env }})
+    needs: [get_account_id, plan]
+    if: inputs.action != 'plan'
+    environment: ${{ needs.get_account_id.outputs.env }} # approval gate
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: terraform } }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Authorize with OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ needs.get_account_id.outputs.account_id }}:role/github-terraform
+          aws-region: ${{ env.AWS_REGION }}
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}"
+      - run: terraform ${{ inputs.action }} -auto-approve $TF_VARS
