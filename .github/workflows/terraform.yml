@@ -1,0 +1,32 @@
+name: terraform
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        options: [dev, prod]
+
+permissions:
+  id-token: write # needed for OIDC login to AWS
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::903036621622:role/github-terraform
+          aws-region: ap-southeast-1
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - run: terraform init -backend-config="bucket=lf-learn-${{ inputs.environment }}-tf-state-903036621622" -backend-config="key=terraform.tfstate" -backend-config="region=ap-southeast-1"
+
+      - run: terraform apply -auto-approve -var-file=../envs/common.tfvars -var-file=../envs/${{ inputs.environment }}.tfvars
