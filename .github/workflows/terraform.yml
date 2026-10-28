@@ -17,7 +17,7 @@ permissions:
 env:
   AWS_REGION: ap-southeast-1
   TF_VARS: -var-file=../envs/common.tfvars -var-file=../envs/${{ startsWith(inputs.environment, 'prod') && 'prod' || 'dev' }}.tfvars
-
+  
 jobs:
   get_account_id:
     name: Extract AWS account ID
@@ -62,7 +62,6 @@ jobs:
     name: Terraform apply
     needs: [get_account_id, plan]
     if: inputs.action == 'apply'
-    environment: ${{ needs.get_account_id.outputs.env }} # approval gate
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: terraform } }
     steps:
@@ -79,7 +78,6 @@ jobs:
     name: Terraform destroy
     needs: [get_account_id, plan]
     if: inputs.action == 'destroy'
-    environment: ${{ needs.get_account_id.outputs.env }} # approval gate
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: terraform } }
     steps:
