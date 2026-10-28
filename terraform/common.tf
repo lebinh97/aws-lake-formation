@@ -8,12 +8,10 @@ terraform {
     }
   }
 
-  # State lives in S3. Defaults point at dev so `terraform init` works locally.
-  # The workflow overrides bucket with -backend-config for the chosen env.
+  # State lives in S3. bucket + region differ per account, so they're passed in:
+  # terraform init -backend-config="bucket=lf-learn-<env>-tf-state-<account_id>" -backend-config="region=<region>"
   backend "s3" {
-    bucket       = "lf-learn-dev-tf-state-903036621622"
     key          = "terraform.tfstate"
-    region       = "ap-southeast-1"
     use_lockfile = true
   }
 }

@@ -55,7 +55,7 @@ jobs:
           role-to-assume: arn:aws:iam::${{ needs.get_account_id.outputs.account_id }}:role/github-terraform
           aws-region: ${{ env.AWS_REGION }}
       - uses: hashicorp/setup-terraform@v3
-      - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}"
+      - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}" -backend-config="region=${{ env.AWS_REGION }}"
       - run: terraform plan ${{ inputs.action == 'destroy' && '-destroy' || '' }} $TF_VARS
 
   apply:
@@ -71,7 +71,7 @@ jobs:
           role-to-assume: arn:aws:iam::${{ needs.get_account_id.outputs.account_id }}:role/github-terraform
           aws-region: ${{ env.AWS_REGION }}
       - uses: hashicorp/setup-terraform@v3
-      - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}"
+      - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}" -backend-config="region=${{ env.AWS_REGION }}"
       - run: terraform apply -auto-approve $TF_VARS
 
   destroy:
@@ -87,5 +87,5 @@ jobs:
           role-to-assume: arn:aws:iam::${{ needs.get_account_id.outputs.account_id }}:role/github-terraform
           aws-region: ${{ env.AWS_REGION }}
       - uses: hashicorp/setup-terraform@v3
-      - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}"
+      - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}" -backend-config="region=${{ env.AWS_REGION }}"
       - run: terraform destroy -auto-approve $TF_VARS
