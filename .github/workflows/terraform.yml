@@ -8,7 +8,7 @@ on:
         options: ["dev (903036621622)", "prod (903036621622)"]
       action:
         type: choice
-        options: [plan, apply, destroy]
+        options: [apply, destroy]
 
 permissions:
   id-token: write
@@ -32,26 +32,9 @@ jobs:
           echo "env=${IN%% *}" >> "$GITHUB_OUTPUT"  # dev
           ID="${IN##*(}"; echo "account_id=${ID%)}" >> "$GITHUB_OUTPUT"  # 903036621622
 
-  plan:
-    name: Plan (${{ needs.get_account_id.outputs.env }})
-    needs: get_account_id
-    runs-on: ubuntu-latest
-    defaults: { run: { working-directory: terraform } }
-    steps:
-      - uses: actions/checkout@v4
-      - name: Authorize with OIDC
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::${{ needs.get_account_id.outputs.account_id }}:role/github-terraform
-          aws-region: ${{ env.AWS_REGION }}
-      - uses: hashicorp/setup-terraform@v3
-      - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}"
-      - run: terraform plan ${{ inputs.action == 'destroy' && '-destroy' || '' }} $TF_VARS
-
   apply:
     name: ${{ inputs.action }} (${{ needs.get_account_id.outputs.env }})
-    needs: [get_account_id, plan]
-    if: inputs.action != 'plan'
+    needs: get_account_id
     environment: ${{ needs.get_account_id.outputs.env }} # approval gate
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: terraform } }
