@@ -16,6 +16,13 @@ terraform {
   }
 }
 
+# Use local.account_id in any .tf file in this folder
+data "aws_caller_identity" "current" {}
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+}
+
 provider "aws" {
   region = var.aws_region
 
