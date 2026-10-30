@@ -1,6 +1,6 @@
 locals {
-  # Created once by hand (like the state bucket): lf-learn-<env>-processed-<account_id>
-  processed_bucket = "${var.project_name}-${var.environment}-processed-${local.account_id}"
+  # From s3.tf; referencing the resource makes Terraform create the bucket first
+  processed_bucket = aws_s3_bucket.processed.bucket
 
   # Every data-contracts/*-data-contract.json becomes one table, keyed by clean table name
   contracts = {
