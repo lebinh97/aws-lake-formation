@@ -1,0 +1,5 @@
+terraform init -reconfigure \
+  -backend-config="bucket=lf-learn-dev-tf-state-$(aws sts get-caller-identity --query Account --output text)" \
+  -backend-config="region=ap-southeast-1"
+
+terraform plan -var-file=../envs/common.tfvars -var-file=../envs/dev.tfvars

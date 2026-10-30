@@ -1,0 +1,14 @@
+{
+  "tablename": "orders",
+  "description": "One row per order line",
+  "columns": [
+    { "name": "order_id", "type": "string", "description": "Order ID" },
+    { "name": "sku_id", "type": "string", "description": "Product SKU" },
+    { "name": "quant", "type": "int", "description": "Quantity ordered" },
+    { "name": "unit_price", "type": "decimal(10,2)", "description": "Price per unit" },
+    { "name": "total_price", "type": "decimal(10,2)", "description": "quant * unit_price - discount" },
+    { "name": "discount", "type": "decimal(10,2)", "description": "Discount amount" },
+    { "name": "customer_id", "type": "string", "description": "Customer ID" }
+  ]
+}
+
