@@ -190,18 +190,6 @@
         "domain": "customer service"
       },
       "dq_rules": null
-    },
-    {
-      "name": "buyer_rating",
-      "type": "int",
-      "nullable": true,
-      "primary_key": false,
-      "partition": null,
-      "description": "Buyer rating of the order, 1-5",
-      "lf_tags": {
-        "domain": "customer service"
-      },
-      "dq_rules": null
     }
   ]
 }
