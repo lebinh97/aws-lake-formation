@@ -71,8 +71,17 @@ jobs:
           role-to-assume: arn:aws:iam::${{ needs.get_account_id.outputs.account_id }}:role/github-terraform
           aws-region: ${{ env.AWS_REGION }}
       - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false # so $(terraform output -raw ...) returns just the value
       - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}" -backend-config="region=${{ env.AWS_REGION }}"
       - run: terraform apply -auto-approve $TF_VARS
+
+      # Create / evolve Iceberg tables from data-contracts/ via Athena
+      - name: Athena tables from data contracts
+        working-directory: . # repo root, so the script finds data-contracts/
+        run: |
+          pip install --quiet boto3
+          python3 scripts/athena_ddl.py "$(terraform -chdir=terraform output -raw glue_database_name)" "$(terraform -chdir=terraform output -raw iceberg_bucket)" "$(terraform -chdir=terraform output -raw athena_workgroup)"
 
   destroy:
     name: Terraform destroy
