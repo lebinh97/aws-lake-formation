@@ -83,7 +83,12 @@ for path in glob.glob("data-contracts/*-data-contract.json"):
     # 1. Ask Glue: does the table exist? If yes, which columns does it have?
     try:
         glue_table = glue.get_table(DatabaseName=database, Name=contract["tablename"])["Table"]
-        existing = {c["Name"]: c["Type"] for c in glue_table["StorageDescriptor"]["Columns"]}
+        # Dropped Iceberg columns stay in Glue, marked "iceberg.field.current": "false" -> skip them
+        existing = {
+            c["Name"]: c["Type"]
+            for c in glue_table["StorageDescriptor"]["Columns"]
+            if c.get("Parameters", {}).get("iceberg.field.current", "true") != "false"
+        }
     except glue.exceptions.EntityNotFoundException:
         existing = None
 
