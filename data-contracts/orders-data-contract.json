@@ -1,0 +1,207 @@
+{
+  "dataset": "sales",
+  "tablename": "orders",
+  "description": "One row per order line",
+  "change_data_capture": {
+    "cdc_type": "upsert"
+  },
+  "lf_tags": {
+    "confidentiality": "internal",
+    "critical": "true"
+  },
+  "columns": [
+    {
+      "name": "order_id",
+      "type": "string",
+      "nullable": false,
+      "primary_key": true,
+      "partition": null,
+      "description": "Order ID",
+      "lf_tags": {
+        "privacy": "non-PII"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "sku_id",
+      "type": "string",
+      "nullable": false,
+      "primary_key": true,
+      "partition": null,
+      "description": "Product SKU",
+      "lf_tags": {
+        "privacy": "non-PII"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "quantity",
+      "type": "int",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Quantity ordered",
+      "lf_tags": {
+        "privacy": "non-PII"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "unit_price",
+      "type": "decimal(10,2)",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Price per unit",
+      "lf_tags": {
+        "privacy": "non-PII"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "total_price",
+      "type": "decimal(10,2)",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "quantity * unit_price - discount",
+      "lf_tags": {
+        "privacy": "non-PII"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "discount",
+      "type": "decimal(10,2)",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Discount amount",
+      "lf_tags": {
+        "privacy": "non-PII"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "order_timestamp",
+      "type": "timestamp",
+      "nullable": false,
+      "primary_key": false,
+      "partition": "day",
+      "description": "When the order was placed (UTC)",
+      "lf_tags": {
+        "privacy": "non-PII"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "buyer_id",
+      "type": "string",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Buyer ID",
+      "lf_tags": {
+        "privacy": "non-P2"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "buyer_phone",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Buyer phone number",
+      "lf_tags": {
+        "privacy": "P2"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "buyer_address",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Buyer delivery address",
+      "lf_tags": {
+        "privacy": "P2"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "buyer_note",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Free-text note from the buyer",
+      "lf_tags": {
+        "confidentiality": "confidential",
+        "domain": "customer service"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "tracking_id",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Shipment tracking ID",
+      "lf_tags": {
+        "domain": "logistics"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "driver_phone_no",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Delivery driver phone number",
+      "lf_tags": {
+        "domain": "logistics"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "platform_commission",
+      "type": "decimal(10,2)",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Commission taken by the platform",
+      "lf_tags": {
+        "domain": "finance"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "buyer_feedback",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Free-text feedback from the buyer after delivery",
+      "lf_tags": {
+        "domain": "customer service"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "buyer_rating",
+      "type": "int",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Buyer rating of the order, 1-5",
+      "lf_tags": {
+        "domain": "customer service"
+      },
+      "dq_rules": null
+    }
+  ]
+}

@@ -23,14 +23,16 @@ jobs:
     name: Extract AWS account ID
     runs-on: ubuntu-latest
     outputs:
-      env: ${{ steps.x.outputs.env }}
-      account_id: ${{ steps.x.outputs.account_id }}
+      role_arn: ${{ steps.x.outputs.role_arn }}
+      state_bucket: ${{ steps.x.outputs.state_bucket }}
     steps:
       - id: x
         run: |
           IN="${{ inputs.environment }}"            # "dev (903036621622)"
-          echo "env=${IN%% *}" >> "$GITHUB_OUTPUT"  # dev
-          ID="${IN##*(}"; echo "account_id=${ID%)}" >> "$GITHUB_OUTPUT"  # 903036621622
+          ENV=$(echo "$IN" | cut -d' ' -f1)         # first word   -> dev
+          ID=$(echo "$IN" | tr -dc '0-9')           # digits only  -> 903036621622
+          echo "role_arn=arn:aws:iam::$ID:role/github-terraform" >> "$GITHUB_OUTPUT"
+          echo "state_bucket=lf-learn-$ENV-tf-state-$ID" >> "$GITHUB_OUTPUT"
 
   oidc:
     name: Log in with OIDC
@@ -39,7 +41,7 @@ jobs:
     steps:
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ needs.get_account_id.outputs.account_id }}:role/github-terraform
+          role-to-assume: ${{ needs.get_account_id.outputs.role_arn }}
           aws-region: ${{ env.AWS_REGION }}
       - run: aws sts get-caller-identity
 
@@ -52,10 +54,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ needs.get_account_id.outputs.account_id }}:role/github-terraform
+          role-to-assume: ${{ needs.get_account_id.outputs.role_arn }}
           aws-region: ${{ env.AWS_REGION }}
       - uses: hashicorp/setup-terraform@v3
-      - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}" -backend-config="region=${{ env.AWS_REGION }}"
+      - run: terraform init -backend-config="bucket=${{ needs.get_account_id.outputs.state_bucket }}" -backend-config="region=${{ env.AWS_REGION }}"
       - run: terraform plan ${{ inputs.action == 'destroy' && '-destroy' || '' }} $TF_VARS
 
   apply:
@@ -64,15 +66,34 @@ jobs:
     if: inputs.action == 'apply'
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: terraform } }
+    outputs:
+      tf: ${{ steps.out.outputs.tf }} # all terraform outputs as JSON, read by athena_ddl
     steps:
       - uses: actions/checkout@v4
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ needs.get_account_id.outputs.account_id }}:role/github-terraform
+          role-to-assume: ${{ needs.get_account_id.outputs.role_arn }}
           aws-region: ${{ env.AWS_REGION }}
       - uses: hashicorp/setup-terraform@v3
-      - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}" -backend-config="region=${{ env.AWS_REGION }}"
+        with:
+          terraform_wrapper: false # so $(terraform output -raw ...) returns just the value
+      - run: terraform init -backend-config="bucket=${{ needs.get_account_id.outputs.state_bucket }}" -backend-config="region=${{ env.AWS_REGION }}"
       - run: terraform apply -auto-approve $TF_VARS
+      - id: out # {"glue_database_name": "...", "iceberg_bucket": "...", "athena_workgroup": "..."}
+        run: echo "tf=$(terraform output -json | jq -c 'map_values(.value)')" >> "$GITHUB_OUTPUT"
+
+  athena_ddl:
+    name: Athena tables from data contracts
+    needs: [get_account_id, apply]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4 # brings data-contracts/ + scripts/ onto the runner
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ needs.get_account_id.outputs.role_arn }}
+          aws-region: ${{ env.AWS_REGION }}
+      - run: pip install --quiet boto3
+      - run: python3 scripts/athena_ddl.py "${{ fromJSON(needs.apply.outputs.tf).glue_database_name }}" "${{ fromJSON(needs.apply.outputs.tf).iceberg_bucket }}" "${{ fromJSON(needs.apply.outputs.tf).athena_workgroup }}"
 
   destroy:
     name: Terraform destroy
@@ -84,8 +105,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ needs.get_account_id.outputs.account_id }}:role/github-terraform
+          role-to-assume: ${{ needs.get_account_id.outputs.role_arn }}
           aws-region: ${{ env.AWS_REGION }}
       - uses: hashicorp/setup-terraform@v3
-      - run: terraform init -backend-config="bucket=lf-learn-${{ needs.get_account_id.outputs.env }}-tf-state-${{ needs.get_account_id.outputs.account_id }}" -backend-config="region=${{ env.AWS_REGION }}"
+      - run: terraform init -backend-config="bucket=${{ needs.get_account_id.outputs.state_bucket }}" -backend-config="region=${{ env.AWS_REGION }}"
       - run: terraform destroy -auto-approve $TF_VARS

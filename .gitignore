@@ -1,3 +1,5 @@
 .env
 .terraform/
 *.tfstate*
+tf-commands
+.venv/
