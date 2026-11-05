@@ -4,4 +4,4 @@ terraform init -reconfigure \
 
 terraform plan -var-file=../envs/common.tfvars -var-file=../envs/dev.tfvars
 
-python scripts\athena_ddl.py lf_learn_dev lf-learn-iceberg-storage-dev-903036621622 lf-learn-dev --dry-run
+python scripts/athena_ddl.py lf_learn_dev lf-learn-iceberg-storage-dev-903036621622 lf-learn-dev --dry-run

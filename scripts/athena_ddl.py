@@ -18,6 +18,7 @@ dry_run = "--dry-run" in sys.argv     # print SQL only, don't run it
 
 athena = boto3.client("athena")
 glue = boto3.client("glue")
+lakeformation = boto3.client("lakeformation")
 
 
 def run(sql):
@@ -72,6 +73,23 @@ def partition_sql(columns):
     return f"PARTITIONED BY ({', '.join(partitions)})\n"
 
 
+def add_lf_tags(resource, tags):
+    """Put LF-tags on a table or column, e.g. tags = {"privacy": "PII", "confidentiality": "internal"}.
+    The tag keys + values must already exist (terraform/lf-tags.tf creates them).
+    Re-running is safe: a key that's already on the resource just gets its value replaced.
+    """
+    print(f"LF-tags {tags} -> {resource}")
+    if dry_run:
+        return
+
+    result = lakeformation.add_lf_tags_to_resource(
+        Resource=resource,
+        LFTags=[{"TagKey": key, "TagValues": [value]} for key, value in tags.items()],
+    )
+    if result.get("Failures"):
+        sys.exit(f"LF-tags failed: {result['Failures']}")
+
+
 # --- One loop per data contract file ---
 # Contracts live in this git repo (data-contracts/), not in AWS.
 # In GHA, actions/checkout downloads the repo onto the runner, so the files are read from there.
@@ -102,17 +120,23 @@ for path in glob.glob("data-contracts/*-data-contract.json"):
             f"LOCATION 's3://{bucket}/{contract['dataset']}/{contract['tablename']}/'\n"
             "TBLPROPERTIES ('table_type'='ICEBERG')"
         )
-        continue
 
     # 3. Table exists -> make its columns match the contract
-    wanted = {c["name"]: c for c in columns}
+    else:
+        wanted = {c["name"]: c for c in columns}
 
-    for name, col in wanted.items():
-        if name not in existing:                      # new in contract -> add
-            run(f"ALTER TABLE {table} ADD COLUMNS ({column_sql(col)})")
-        elif existing[name] != col["type"]:           # type changed -> change
-            run(f"ALTER TABLE {table} CHANGE COLUMN `{name}` {column_sql(col)}")
+        for name, col in wanted.items():
+            if name not in existing:                      # new in contract -> add
+                run(f"ALTER TABLE {table} ADD COLUMNS ({column_sql(col)})")
+            elif existing[name] != col["type"]:           # type changed -> change
+                run(f"ALTER TABLE {table} CHANGE COLUMN `{name}` {column_sql(col)}")
 
-    for name in existing:
-        if name not in wanted:                        # removed from contract -> drop
-            run(f"ALTER TABLE {table} DROP COLUMN `{name}`")
+        for name in existing:
+            if name not in wanted:                        # removed from contract -> drop
+                run(f"ALTER TABLE {table} DROP COLUMN `{name}`")
+
+    # 4. Put the contract's LF-tags on the table, then on each column
+    table_ref = {"DatabaseName": database, "Name": contract["tablename"]}
+    add_lf_tags({"Table": table_ref}, contract["lf_tags"])
+    for col in columns:
+        add_lf_tags({"TableWithColumns": {**table_ref, "ColumnNames": [col["name"]]}}, col["lf_tags"])
