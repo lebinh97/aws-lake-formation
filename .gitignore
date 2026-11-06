@@ -3,3 +3,4 @@
 *.tfstate*
 tf-commands
 .venv/
+login-info

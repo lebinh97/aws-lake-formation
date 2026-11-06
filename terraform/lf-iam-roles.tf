@@ -36,6 +36,11 @@ resource "aws_iam_role_policy" "lf" {
         Action   = ["athena:StartQueryExecution", "athena:GetQueryExecution", "athena:GetQueryResults", "athena:StopQueryExecution", "athena:GetWorkGroup"]
         Resource = aws_athena_workgroup.main.arn
       },
+      { # console: list workgroups so this env's one can be picked in the dropdown
+        Effect   = "Allow"
+        Action   = "athena:ListWorkGroups"
+        Resource = "*"
+      },
       { # read table definitions
         Effect = "Allow"
         Action = ["glue:GetDatabase", "glue:GetDatabases", "glue:GetTable", "glue:GetTables", "glue:GetPartitions"]
