@@ -1,6 +1,6 @@
-# One Athena workgroup per env: lf-learn-dev / lf-learn-prod
+# One Athena workgroup per env: lf-learn-<env>-<account_id>
 resource "aws_athena_workgroup" "main" {
-  name          = "${var.project_name}-${var.environment}"
+  name          = local.name_prefix
   force_destroy = true # lets destroy delete it even when it has query history
 
   configuration {

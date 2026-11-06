@@ -1,6 +1,6 @@
-# Holds Iceberg table data (Parquet) + metadata: lf-learn-iceberg-storage-<env>-<account_id>
+# Holds Iceberg table data (Parquet) + metadata: lf-learn-<env>-<account_id>-iceberg-storage
 resource "aws_s3_bucket" "iceberg" {
-  bucket        = "${var.project_name}-iceberg-storage-${var.environment}-${local.account_id}"
+  bucket        = "${local.name_prefix}-iceberg-storage"
   force_destroy = true # lets destroy delete it even when it has files
 }
 

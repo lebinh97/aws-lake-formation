@@ -11,9 +11,9 @@ import time
 import boto3
 
 # --- Inputs (passed in by the GHA workflow) ---
-database = sys.argv[1]                # e.g. lf_learn_dev
-bucket = sys.argv[2]                  # e.g. lf-learn-iceberg-storage-dev-<account_id>
-workgroup = sys.argv[3]               # e.g. lf-learn-dev
+database = sys.argv[1]                # e.g. lf_learn_dev_<account_id>
+bucket = sys.argv[2]                  # e.g. lf-learn-dev-<account_id>-iceberg-storage
+workgroup = sys.argv[3]               # e.g. lf-learn-dev-<account_id>
 dry_run = "--dry-run" in sys.argv     # print SQL only, don't run it
 
 athena = boto3.client("athena")

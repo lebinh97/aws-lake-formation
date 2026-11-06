@@ -1,6 +1,6 @@
-# LF-tag keys + allowed values come from lf-tags/lf-tags.json (edit there, not here)
+# LF-tag keys + allowed values come from lf-resources/lf-tags.json (edit there, not here)
 locals {
-  lf_tags = jsondecode(file("${path.module}/../lf-tags/lf-tags.json"))
+  lf_tags = jsondecode(file("${path.module}/../lf-resources/lf-tags.json"))
 }
 
 resource "aws_lakeformation_lf_tag" "this" {
