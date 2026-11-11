@@ -1,7 +1,4 @@
 # Roles come from lf-resources/lf-roles.yml (edit there, not here): lf-learn-<env>-<account_id>-<name>
-locals {
-  lf_roles = yamldecode(file("${path.module}/../lf-resources/lf-roles.yml"))
-}
 
 resource "aws_iam_role" "lf" {
   for_each    = local.lf_roles
@@ -31,19 +28,24 @@ resource "aws_iam_role_policy" "lf" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
-      { # run queries in this env's workgroup
-        Effect   = "Allow"
-        Action   = ["athena:StartQueryExecution", "athena:GetQueryExecution", "athena:GetQueryResults", "athena:StopQueryExecution", "athena:GetWorkGroup"]
-        Resource = aws_athena_workgroup.main.arn
-      },
       { # console: list workgroups so this env's one can be picked in the dropdown
         Effect   = "Allow"
         Action   = "athena:ListWorkGroups"
         Resource = "*"
       },
+      { # run queries in this env's workgroup
+        Effect   = "Allow"
+        Action   = ["athena:StartQueryExecution", "athena:GetQueryExecution", "athena:GetQueryResults", "athena:StopQueryExecution", "athena:GetWorkGroup"]
+        Resource = aws_athena_workgroup.main.arn
+      },
+      { # Athena writes query results here
+        Effect   = "Allow"
+        Action   = ["s3:GetBucketLocation", "s3:ListBucket", "s3:GetObject", "s3:PutObject"]
+        Resource = [aws_s3_bucket.iceberg.arn, "${aws_s3_bucket.iceberg.arn}/athena-results/*"]
+      },
       { # read table definitions
         Effect = "Allow"
-        Action = ["glue:GetDatabase", "glue:GetDatabases", "glue:GetTable", "glue:GetTables", "glue:GetPartitions"]
+        Action = ["glue:GetDatabase", "glue:GetDatabases", "glue:GetTable", "glue:GetTables"]
         Resource = [
           "arn:aws:glue:${var.aws_region}:${local.account_id}:catalog",
           "arn:aws:glue:${var.aws_region}:${local.account_id}:database/${aws_glue_catalog_database.main.name}",
@@ -54,12 +56,7 @@ resource "aws_iam_role_policy" "lf" {
         Effect   = "Allow"
         Action   = "lakeformation:GetDataAccess"
         Resource = "*"
-      },
-      { # Athena writes query results here
-        Effect   = "Allow"
-        Action   = ["s3:GetBucketLocation", "s3:ListBucket", "s3:GetObject", "s3:PutObject"]
-        Resource = [aws_s3_bucket.iceberg.arn, "${aws_s3_bucket.iceberg.arn}/athena-results/*"]
-      },
+      }
     ]
   })
 }

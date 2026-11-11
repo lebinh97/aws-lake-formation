@@ -1,4 +1,7 @@
 # LF layer: which data each role in lf-resources/lf-roles.yml can see
+locals {
+  lf_roles = yamldecode(file("${path.module}/../lf-resources/lf-roles.yml"))
+}
 
 # See the database (it has no tags, so it's granted by name)
 resource "aws_lakeformation_permissions" "database" {

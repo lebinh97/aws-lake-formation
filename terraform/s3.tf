@@ -9,6 +9,8 @@ resource "aws_s3_bucket" "iceberg" {
 resource "aws_lakeformation_resource" "iceberg" {
   arn                     = aws_s3_bucket.iceberg.arn
   use_service_linked_role = true # LF reads S3 with its own AWS-managed role
+
+  depends_on = [aws_lakeformation_data_lake_settings.main] # created after the LF settings, destroyed before them
 }
 
 resource "aws_s3_bucket_public_access_block" "iceberg" {
