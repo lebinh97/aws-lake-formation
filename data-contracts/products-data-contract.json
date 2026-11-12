@@ -1,0 +1,105 @@
+{
+  "dataset": "catalog",
+  "tablename": "products",
+  "description": "One row per product (SKU)",
+  "change_data_capture": {
+    "cdc_type": "upsert"
+  },
+  "lf_tags": {
+    "privacy": "non-PII",
+    "confidentiality": "internal"
+  },
+  "columns": [
+    {
+      "name": "sku_id",
+      "type": "string",
+      "nullable": false,
+      "primary_key": true,
+      "partition": null,
+      "description": "Product SKU",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "product_name",
+      "type": "string",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Product name",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "category",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Product category",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "list_price",
+      "type": "decimal(10,2)",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Price shown to buyers",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "unit_cost",
+      "type": "decimal(10,2)",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "What one unit costs us",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "confidential"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "supplier_name",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Who supplies the product",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "confidential"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "When the product was added (UTC)",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    }
+  ]
+}

@@ -6,8 +6,8 @@
     "cdc_type": "upsert"
   },
   "lf_tags": {
-    "confidentiality": "internal",
-    "critical": "true"
+    "privacy": "non-PII",
+    "confidentiality": "internal"
   },
   "columns": [
     {
@@ -18,7 +18,8 @@
       "partition": null,
       "description": "Order ID",
       "lf_tags": {
-        "privacy": "non-PII"
+        "privacy": "non-PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -30,7 +31,8 @@
       "partition": null,
       "description": "Product SKU",
       "lf_tags": {
-        "privacy": "non-PII"
+        "privacy": "non-PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -42,7 +44,8 @@
       "partition": null,
       "description": "Quantity ordered",
       "lf_tags": {
-        "privacy": "non-PII"
+        "privacy": "non-PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -54,7 +57,8 @@
       "partition": null,
       "description": "Price per unit",
       "lf_tags": {
-        "privacy": "non-PII"
+        "privacy": "non-PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -66,7 +70,8 @@
       "partition": null,
       "description": "quantity * unit_price - discount",
       "lf_tags": {
-        "privacy": "non-PII"
+        "privacy": "non-PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -78,7 +83,8 @@
       "partition": null,
       "description": "Discount amount",
       "lf_tags": {
-        "privacy": "non-PII"
+        "privacy": "non-PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -90,7 +96,8 @@
       "partition": "day",
       "description": "When the order was placed (UTC)",
       "lf_tags": {
-        "privacy": "non-PII"
+        "privacy": "non-PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -102,7 +109,8 @@
       "partition": null,
       "description": "Buyer ID",
       "lf_tags": {
-        "privacy": "non-P2"
+        "privacy": "non-PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -114,7 +122,8 @@
       "partition": null,
       "description": "Buyer phone number",
       "lf_tags": {
-        "privacy": "P2"
+        "privacy": "PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -126,7 +135,8 @@
       "partition": null,
       "description": "Buyer delivery address",
       "lf_tags": {
-        "privacy": "P2"
+        "privacy": "PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -138,8 +148,8 @@
       "partition": null,
       "description": "Free-text note from the buyer",
       "lf_tags": {
-        "confidentiality": "confidential",
-        "domain": "customer service"
+        "privacy": "PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -151,7 +161,8 @@
       "partition": null,
       "description": "Shipment tracking ID",
       "lf_tags": {
-        "domain": "logistics"
+        "privacy": "non-PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -163,7 +174,8 @@
       "partition": null,
       "description": "Delivery driver phone number",
       "lf_tags": {
-        "domain": "logistics"
+        "privacy": "PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -175,7 +187,8 @@
       "partition": null,
       "description": "Commission taken by the platform",
       "lf_tags": {
-        "domain": "finance"
+        "privacy": "non-PII",
+        "confidentiality": "confidential"
       },
       "dq_rules": null
     },
@@ -187,7 +200,8 @@
       "partition": null,
       "description": "Free-text feedback from the buyer after delivery",
       "lf_tags": {
-        "domain": "customer service"
+        "privacy": "PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     },
@@ -199,7 +213,8 @@
       "partition": null,
       "description": "Buyer rating of the order, 1-5",
       "lf_tags": {
-        "domain": "customer service"
+        "privacy": "non-PII",
+        "confidentiality": "internal"
       },
       "dq_rules": null
     }

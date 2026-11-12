@@ -1,0 +1,42 @@
+# One IAM role per entry: lf-learn-<env>-<account_id>-<name>
+# tags: the role can use columns whose LF-tags match ALL keys (AND), any listed value (OR)
+#   e.g. privacy [non-PII, PII] + confidentiality [internal] -> buyer_phone yes, platform_commission no
+# Tag keys + values must exist in lf-tags.json
+# test_users: IAM users (create them first in the console) allowed to switch into this role, to try what it can see
+
+glue-worker:
+  description: Glue job that loads data (MERGE)
+  assumed_by: glue.amazonaws.com # Glue runs as this role
+  test_users:
+    - test-glue-worker
+  permissions: [SELECT, INSERT, DELETE, ALTER, DESCRIBE]
+  tags:
+    privacy: [non-PII, PII]
+    confidentiality: [internal, confidential]
+
+admin:
+  description: Reads everything
+  test_users:
+    - test-admin
+  permissions: [SELECT, DESCRIBE]
+  tags:
+    privacy: [non-PII, PII]
+    confidentiality: [internal, confidential]
+
+customer-service:
+  description: Needs buyer contact details, not business numbers
+  test_users:
+    - test-customer-service
+  permissions: [SELECT, DESCRIBE]
+  tags:
+    privacy: [non-PII, PII]
+    confidentiality: [internal]
+
+general-users:
+  description: Safe columns only
+  test_users:
+    - test-general-users
+  permissions: [SELECT, DESCRIBE]
+  tags:
+    privacy: [non-PII]
+    confidentiality: [internal]

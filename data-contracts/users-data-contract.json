@@ -1,0 +1,118 @@
+{
+  "dataset": "customer",
+  "tablename": "users",
+  "description": "One row per user (buyer)",
+  "change_data_capture": {
+    "cdc_type": "upsert"
+  },
+  "lf_tags": {
+    "privacy": "PII",
+    "confidentiality": "internal"
+  },
+  "columns": [
+    {
+      "name": "user_id",
+      "type": "string",
+      "nullable": false,
+      "primary_key": true,
+      "partition": null,
+      "description": "User ID, same as orders.buyer_id",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "full_name",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "User full name",
+      "lf_tags": {
+        "privacy": "PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "email",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Email address",
+      "lf_tags": {
+        "privacy": "PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "phone",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Phone number",
+      "lf_tags": {
+        "privacy": "PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "address",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Home address",
+      "lf_tags": {
+        "privacy": "PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "date_of_birth",
+      "type": "date",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Date of birth",
+      "lf_tags": {
+        "privacy": "PII",
+        "confidentiality": "confidential"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "country",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Country code, e.g. VN",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "signup_timestamp",
+      "type": "timestamp",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "When the user signed up (UTC)",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    }
+  ]
+}

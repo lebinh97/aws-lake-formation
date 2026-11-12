@@ -3,3 +3,6 @@
 *.tfstate*
 tf-commands
 .venv/
+__pycache__/
+login-info__pycache__/
+login-info

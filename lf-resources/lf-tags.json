@@ -1,0 +1,10 @@
+{
+  "privacy": {
+    "description": "Is it personal data? PII = identifies a person (name, phone, address, email)",
+    "values": ["non-PII", "PII"]
+  },
+  "confidentiality": {
+    "description": "Is it business-sensitive? confidential = costs, commission, suppliers",
+    "values": ["internal", "confidential"]
+  }
+}
