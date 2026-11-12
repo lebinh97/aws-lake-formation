@@ -6,7 +6,3 @@ output "glue_database_name" {
 output "iceberg_bucket" {
   value = aws_s3_bucket.iceberg.bucket
 }
-
-output "athena_workgroup" {
-  value = aws_athena_workgroup.main.name
-}

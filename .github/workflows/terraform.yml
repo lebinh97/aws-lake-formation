@@ -79,7 +79,7 @@ jobs:
           terraform_wrapper: false # so $(terraform output -raw ...) returns just the value
       - run: terraform init -backend-config="bucket=${{ needs.get_account_id.outputs.state_bucket }}" -backend-config="region=${{ env.AWS_REGION }}"
       - run: terraform apply -auto-approve $TF_VARS
-      - id: out # {"glue_database_name": "...", "iceberg_bucket": "...", "athena_workgroup": "..."}
+      - id: out # {"glue_database_name": "...", "iceberg_bucket": "...", }
         run: echo "tf=$(terraform output -json | jq -c 'map_values(.value)')" >> "$GITHUB_OUTPUT"
 
   athena_ddl:
@@ -93,7 +93,7 @@ jobs:
           role-to-assume: ${{ needs.get_account_id.outputs.role_arn }}
           aws-region: ${{ env.AWS_REGION }}
       - run: pip install --quiet boto3
-      - run: python3 scripts/athena_ddl.py "${{ fromJSON(needs.apply.outputs.tf).glue_database_name }}" "${{ fromJSON(needs.apply.outputs.tf).iceberg_bucket }}" "${{ fromJSON(needs.apply.outputs.tf).athena_workgroup }}"
+      - run: python3 scripts/athena_ddl.py "${{ fromJSON(needs.apply.outputs.tf).glue_database_name }}" "${{ fromJSON(needs.apply.outputs.tf).iceberg_bucket }}"
 
   destroy:
     name: Terraform destroy
