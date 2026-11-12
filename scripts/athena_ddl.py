@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Create or update Iceberg tables in Athena from data-contracts/*-data-contract.json.
 
-Usage: python3 scripts/athena_ddl.py <database> <bucket> <workgroup> [--dry-run]
+Usage: python3 scripts/athena_ddl.py <database> <bucket> [--dry-run]
 """
 import glob
 import json
@@ -13,7 +13,6 @@ import boto3
 # --- Inputs (passed in by the GHA workflow) ---
 database = sys.argv[1]                # e.g. lf_learn_dev_<account_id>
 bucket = sys.argv[2]                  # e.g. lf-learn-dev-<account_id>-iceberg-storage
-workgroup = sys.argv[3]               # e.g. lf-learn-dev-<account_id>
 dry_run = "--dry-run" in sys.argv     # print SQL only, don't run it
 
 athena = boto3.client("athena")
@@ -29,7 +28,7 @@ def run(sql):
 
     query_id = athena.start_query_execution(
         QueryString=sql,
-        WorkGroup=workgroup,  # the workgroup decides where results are written
+        ResultConfiguration={"OutputLocation": f"s3://{bucket}/athena-results/ddl/"},  # default "primary" workgroup has no results location
     )["QueryExecutionId"]
 
     # Athena runs queries in the background, so poll until it's done

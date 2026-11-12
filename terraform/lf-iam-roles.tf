@@ -27,21 +27,27 @@ resource "aws_iam_role_policy" "lf" {
 
   policy = jsonencode({
     Version = "2012-10-17"
+    # Statements 1-4: Athena (workgroups + query results). Statements 5-6: Glue Data Catalog + Lake Formation
     Statement = [
       { # console: list workgroups so this env's one can be picked in the dropdown
         Effect   = "Allow"
         Action   = "athena:ListWorkGroups"
         Resource = "*"
       },
-      { # run queries in this env's workgroup
+      { # run queries only in this role's own workgroup
         Effect   = "Allow"
         Action   = ["athena:StartQueryExecution", "athena:GetQueryExecution", "athena:GetQueryResults", "athena:StopQueryExecution", "athena:GetWorkGroup"]
-        Resource = aws_athena_workgroup.main.arn
+        Resource = aws_athena_workgroup.role[each.key].arn
       },
-      { # Athena writes query results here
+      { # bucket actions (the bucket itself, not its files)
         Effect   = "Allow"
-        Action   = ["s3:GetBucketLocation", "s3:ListBucket", "s3:GetObject", "s3:PutObject"]
-        Resource = [aws_s3_bucket.iceberg.arn, "${aws_s3_bucket.iceberg.arn}/athena-results/*"]
+        Action   = ["s3:GetBucketLocation", "s3:ListBucket"]
+        Resource = aws_s3_bucket.iceberg.arn
+      },
+      { # file actions: only this role's query results
+        Effect   = "Allow"
+        Action   = ["s3:GetObject", "s3:PutObject"]
+        Resource = "${aws_s3_bucket.iceberg.arn}/athena-results/${each.key}/*"
       },
       { # read table definitions
         Effect = "Allow"
