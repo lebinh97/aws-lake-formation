@@ -1,0 +1,222 @@
+{
+  "dataset": "contact_center",
+  "tablename": "conversations",
+  "description": "One row per chat contact. A transfer creates a new row pointing back via previous_conversation_id",
+  "change_data_capture": {
+    "cdc_type": "upsert"
+  },
+  "lf_tags": {
+    "privacy": "non-PII",
+    "confidentiality": "internal"
+  },
+  "columns": [
+    {
+      "name": "conversation_id",
+      "type": "string",
+      "nullable": false,
+      "primary_key": true,
+      "partition": null,
+      "description": "Connect contact ID",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "initial_conversation_id",
+      "type": "string",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "First leg of the chat, FK -> conversations.conversation_id",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "previous_conversation_id",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Leg this one was transferred from, null on the first leg",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "queue_id",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Queue this leg waited in, FK -> queues.queue_id",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "initiation_method",
+      "type": "string",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "API, TRANSFER, QUEUE_TRANSFER",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "channel",
+      "type": "string",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Always CHAT for now",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "priority",
+      "type": "int",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Routing priority actually used",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "status",
+      "type": "string",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "QUEUED, CONNECTED, ENDED",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "initiated_at",
+      "type": "timestamp",
+      "nullable": false,
+      "primary_key": false,
+      "partition": "day",
+      "description": "When the chat leg started (UTC)",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "enqueued_at",
+      "type": "timestamp",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "When the chat entered the queue (UTC)",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "agent_connected_at",
+      "type": "timestamp",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "When an agent joined (UTC)",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "first_agent_response_at",
+      "type": "timestamp",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "First agent message (UTC), checked against queues.sla_first_response_seconds",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "disconnected_at",
+      "type": "timestamp",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "When the chat leg ended (UTC)",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "disconnect_reason",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "CUSTOMER_DISCONNECT, AGENT_DISCONNECT, EXPIRED, TRANSFERRED",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "csat_score",
+      "type": "int",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Post-chat survey score 1-5, null if not answered",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "updated_on",
+      "type": "timestamp",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Last change in the source (UTC), used for CDC",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    }
+  ]
+}

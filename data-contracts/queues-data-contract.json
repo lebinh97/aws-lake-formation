@@ -1,0 +1,170 @@
+{
+  "dataset": "contact_center",
+  "tablename": "queues",
+  "description": "One row per queue that chats wait in (Amazon Connect queue)",
+  "change_data_capture": {
+    "cdc_type": "upsert"
+  },
+  "lf_tags": {
+    "privacy": "non-PII",
+    "confidentiality": "internal"
+  },
+  "columns": [
+    {
+      "name": "queue_id",
+      "type": "string",
+      "nullable": false,
+      "primary_key": true,
+      "partition": null,
+      "description": "Connect queue ID",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "queue_name",
+      "type": "string",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Queue name, e.g. billing-vn",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "category",
+      "type": "string",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "billing, tech_support, sales, complaints",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "language",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "ISO language code, e.g. vi, en",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "priority",
+      "type": "int",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Default routing priority for chats entering this queue, 1 = highest",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "sla_first_response_seconds",
+      "type": "int",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Target seconds from enqueue to the first agent message",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "sla_resolution_seconds",
+      "type": "int",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Target seconds from enqueue to disconnect",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "max_concurrent_chats",
+      "type": "int",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Upper limit of chats waiting in the queue",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "overflow_queue_id",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Queue chats go to when this one is full, FK -> queues.queue_id",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "hours_of_operation",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Opening hours, e.g. MON-FRI 08:00-20:00 Asia/Ho_Chi_Minh",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "is_active",
+      "type": "boolean",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "False once the queue is retired",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "updated_on",
+      "type": "timestamp",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Last change in the source (UTC), used for CDC",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "dataset": "contact_center",
+  "tablename": "agents",
+  "description": "One row per agent (Amazon Connect user)",
+  "change_data_capture": {
+    "cdc_type": "upsert"
+  },
+  "lf_tags": {
+    "privacy": "non-PII",
+    "confidentiality": "internal"
+  },
+  "columns": [
+    {
+      "name": "agent_id",
+      "type": "string",
+      "nullable": false,
+      "primary_key": true,
+      "partition": null,
+      "description": "Connect user ID",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "username",
+      "type": "string",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Login name",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "full_name",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Agent full name",
+      "lf_tags": {
+        "privacy": "PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "email",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Work email address",
+      "lf_tags": {
+        "privacy": "PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "routing_profile_id",
+      "type": "string",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "FK -> routing_profiles.routing_profile_id",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "team",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Connect hierarchy group, e.g. HCM / Billing / Team A",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "supervisor_agent_id",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "FK -> agents.agent_id",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "hourly_cost",
+      "type": "decimal(10,2)",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Cost per hour, for cost-per-chat reports",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "confidential"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "hired_at",
+      "type": "date",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Hire date",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "is_active",
+      "type": "boolean",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "False once the agent has left",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "updated_on",
+      "type": "timestamp",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Last change in the source (UTC), used for CDC",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "dataset": "contact_center",
+  "tablename": "routing_profiles",
+  "description": "One row per routing profile: which queues an agent takes chats from, and how many at once",
+  "change_data_capture": {
+    "cdc_type": "upsert"
+  },
+  "lf_tags": {
+    "privacy": "non-PII",
+    "confidentiality": "internal"
+  },
+  "columns": [
+    {
+      "name": "routing_profile_id",
+      "type": "string",
+      "nullable": false,
+      "primary_key": true,
+      "partition": null,
+      "description": "Connect routing profile ID",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "routing_profile_name",
+      "type": "string",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Profile name, e.g. tier1-billing",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "chat_concurrency",
+      "type": "int",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Chats an agent can handle at the same time (1-10)",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "default_outbound_queue_id",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "FK -> queues.queue_id",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "updated_on",
+      "type": "timestamp",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Last change in the source (UTC), used for CDC",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    }
+  ]
+}

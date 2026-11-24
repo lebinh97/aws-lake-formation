@@ -1,0 +1,144 @@
+{
+  "dataset": "contact_center",
+  "tablename": "customers",
+  "description": "One row per end customer (Amazon Connect Customer Profiles)",
+  "change_data_capture": {
+    "cdc_type": "upsert"
+  },
+  "lf_tags": {
+    "privacy": "non-PII",
+    "confidentiality": "internal"
+  },
+  "columns": [
+    {
+      "name": "customer_id",
+      "type": "string",
+      "nullable": false,
+      "primary_key": true,
+      "partition": null,
+      "description": "Customer profile ID",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "full_name",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Customer full name",
+      "lf_tags": {
+        "privacy": "PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "email",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Email address",
+      "lf_tags": {
+        "privacy": "PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "phone_number",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Phone number, E.164 format",
+      "lf_tags": {
+        "privacy": "PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "country",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Country code, e.g. VN",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "preferred_language",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "ISO language code, e.g. vi, en",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "segment",
+      "type": "string",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "standard, vip, enterprise",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "lifetime_value",
+      "type": "decimal(12,2)",
+      "nullable": true,
+      "primary_key": false,
+      "partition": null,
+      "description": "Total revenue from this customer",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "confidential"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "When the profile was created (UTC)",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    },
+    {
+      "name": "updated_on",
+      "type": "timestamp",
+      "nullable": false,
+      "primary_key": false,
+      "partition": null,
+      "description": "Last change in the source (UTC), used for CDC",
+      "lf_tags": {
+        "privacy": "non-PII",
+        "confidentiality": "internal"
+      },
+      "dq_rules": null
+    }
+  ]
+}
